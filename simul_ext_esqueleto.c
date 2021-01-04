@@ -29,10 +29,10 @@ void GrabarDatos(EXT_DATOS *memdatos, FILE *fich);
 
 int main()
 {
-	 char *comando[LONGITUD_COMANDO];
-	 char *orden[LONGITUD_COMANDO];
-	 char *argumento1[LONGITUD_COMANDO];
-	 char *argumento2[LONGITUD_COMANDO];
+	 char comando[LONGITUD_COMANDO];
+	 char orden[LONGITUD_COMANDO];
+	 char argumento1[LONGITUD_COMANDO];
+	 char argumento2[LONGITUD_COMANDO];
 	 
 	 int i,j;
 	 unsigned long int m;

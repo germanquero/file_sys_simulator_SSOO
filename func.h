@@ -22,6 +22,7 @@ int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argu
         if(strcmp(orden, lista_ordenes[i]) == 0)
             return 0;
     }
+    printf("%s is not a command\n", orden);
     return 1;
 }
 

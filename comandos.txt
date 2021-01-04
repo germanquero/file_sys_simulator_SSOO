@@ -1,8 +1,0 @@
-info
-bytemaps
-dir
-rename
-imprimir
-remove
-copy
-salir
