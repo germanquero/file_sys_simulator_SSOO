@@ -46,20 +46,30 @@ void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
 
 }
 
-void Printbytemaps(EXT_BYTE_MAPS ext_bytemaps){
+void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
     int i;
 
     printf("Bytemaps de bloques:\n");
     for ( i = 0; i < MAX_BLOQUES_PARTICION; i++)
     {
-        printf("%d",ext_bytemaps.bmap_bloques[i]);
+        printf("%d",ext_bytemaps->bmap_bloques[i]);
     }
     printf("\nBytemaps de inodos:\n");
     for ( i = 0; i < MAX_INODOS; i++)
     {
-        printf("%d",ext_bytemaps.bmap_inodos[i]);
+        printf("%d",ext_bytemaps->bmap_inodos[i]);
     }
+    printf("\n");
     
 
     
+}
+
+void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
+    printf("Numero de inodos de la particion:%d\n",psup->s_inodes_count);
+    printf("Numero de bloques de la particion:%d\n",psup->s_blocks_count);
+    printf("Numero de inodos libres:%d\n",psup->s_free_inodes_count);
+    printf("Numero de bloques libres:%d\n",psup->s_free_blocks_count);
+    printf("Primer bloque de datos:%d\n",psup->s_first_data_block);
+    printf("Tamaño de los bloques:%d\n",psup->s_block_size);
 }
