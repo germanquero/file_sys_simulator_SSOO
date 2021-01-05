@@ -61,7 +61,13 @@ int main()
 
      Printbytemaps(&ext_bytemaps);
      LeeSuperBloque(&ext_superblock);
-     
+     char prueba[10]="HOLA.txt";
+     int h = BuscaFich(directorio,&ext_blq_inodos,prueba);
+     printf("%d\n",h);
+     Directorio(directorio,&ext_blq_inodos);
+
+
+
      // Buce de tratamiento de comandos
      /*for (;;){
 		 do {

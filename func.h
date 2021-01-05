@@ -1,3 +1,6 @@
+#include<string.h>
+
+
 int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argumento2){
     char *lista_ordenes[8] = {"info", "bytemaps", "dir", "rename", "imprimir", "remove", "copy", "salir"};
     char comando[3][100];
@@ -26,10 +29,6 @@ int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argu
     return 1;
 }
 
-void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
-
-}
-
 void Grabarinodosydirectorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, FILE *fich){
 
 }
@@ -48,7 +47,6 @@ void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
 
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
     int i;
-
     printf("Bytemaps de bloques:\n");
     for ( i = 0; i < MAX_BLOQUES_PARTICION; i++)
     {
@@ -60,9 +58,6 @@ void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
         printf("%d",ext_bytemaps->bmap_inodos[i]);
     }
     printf("\n");
-    
-
-    
 }
 
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
@@ -72,4 +67,47 @@ void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
     printf("Numero de bloques libres:%d\n",psup->s_free_blocks_count);
     printf("Primer bloque de datos:%d\n",psup->s_first_data_block);
     printf("Tamaño de los bloques:%d\n",psup->s_block_size);
+}
+
+int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre){ //devuelve 0 si encuentra un nombre igual y si no devuelve 1
+    int i;
+    for ( i = 0; i < MAX_FICHEROS; i++)
+    {
+        if (strcmp(directorio[i].dir_nfich,nombre)==0)
+        {
+            return 0;
+        }
+        
+    }
+    return 1;                           
+}
+
+void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
+    int i,j;
+    for ( i = 1; i < MAX_FICHEROS; i++)
+    {
+        if (directorio[i].dir_inodo==0xFFFF)
+        {
+            break;
+        }
+        
+        printf("%s\t",directorio[i].dir_nfich);
+        printf("tamaño:%d\t",inodos->blq_inodos[directorio[i].dir_inodo].size_fichero);
+        printf("inodos:%d\t",directorio[i].dir_inodo);
+        printf("bloques: ");
+        for (j = 0; i < MAX_NUMS_BLOQUE_INODO; j++)
+        {
+            if (inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]==0xFFFF)
+            {
+                break;
+            }
+            
+            printf("%d ",inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]);
+        }
+        
+        printf("\n");
+
+    }
+    
+
 }
