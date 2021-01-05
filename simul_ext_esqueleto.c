@@ -6,7 +6,7 @@
 
 #define LONGITUD_COMANDO 100
 
-void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps);
+void Printbytemaps(EXT_BYTE_MAPS ext_bytemaps);
 int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argumento2);
 void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup);
 int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
@@ -29,10 +29,10 @@ void GrabarDatos(EXT_DATOS *memdatos, FILE *fich);
 
 int main()
 {
-	 char comando[LONGITUD_COMANDO];
-	 char orden[LONGITUD_COMANDO];
-	 char argumento1[LONGITUD_COMANDO];
-	 char argumento2[LONGITUD_COMANDO];
+	 char *comando[LONGITUD_COMANDO];
+	 char *orden[LONGITUD_COMANDO];
+	 char *argumento1[LONGITUD_COMANDO];
+	 char *argumento2[LONGITUD_COMANDO];
 	 
 	 int i,j;
 	 unsigned long int m;
@@ -58,9 +58,11 @@ int main()
      memcpy(&ext_bytemaps,(EXT_BLQ_INODOS *)&datosfich[1], SIZE_BLOQUE);
      memcpy(&ext_blq_inodos,(EXT_BLQ_INODOS *)&datosfich[2], SIZE_BLOQUE);
      memcpy(&memdatos,(EXT_DATOS *)&datosfich[4],MAX_BLOQUES_DATOS*SIZE_BLOQUE);
+
+     Printbytemaps(ext_bytemaps);
      
      // Buce de tratamiento de comandos
-     for (;;){
+     /*for (;;){
 		 do {
 		 printf (">> ");
 		 fflush(stdin);
@@ -85,5 +87,5 @@ int main()
             fclose(fent);
             return 0;
          }
-     }
+     }*/
 }

@@ -45,3 +45,21 @@ void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich){
 void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
 
 }
+
+void Printbytemaps(EXT_BYTE_MAPS ext_bytemaps){
+    int i;
+
+    printf("Bytemaps de bloques:\n");
+    for ( i = 0; i < MAX_BLOQUES_PARTICION; i++)
+    {
+        printf("%d",ext_bytemaps.bmap_bloques[i]);
+    }
+    printf("\nBytemaps de inodos:\n");
+    for ( i = 0; i < MAX_INODOS; i++)
+    {
+        printf("%d",ext_bytemaps.bmap_inodos[i]);
+    }
+    
+
+    
+}
