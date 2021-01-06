@@ -75,11 +75,11 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre)
     {
         if (strcmp(directorio[i].dir_nfich,nombre)==0)
         {
-            return 0;
+            return 1;
         }
         
     }
-    return 1;                           
+    return 0;                           
 }
 
 void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
@@ -90,12 +90,11 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
         {
             break;
         }
-        
         printf("%s\t",directorio[i].dir_nfich);
         printf("tamaño:%d\t",inodos->blq_inodos[directorio[i].dir_inodo].size_fichero);
         printf("inodos:%d\t",directorio[i].dir_inodo);
         printf("bloques: ");
-        for (j = 0; i < MAX_NUMS_BLOQUE_INODO; j++)
+        for (j = 0; ; j++)
         {
             if (inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]==0xFFFF)
             {
@@ -104,10 +103,49 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
             
             printf("%d ",inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]);
         }
-        
         printf("\n");
+    }   
+}
 
+int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo){
+    int i,flag=0;
+    for ( i = 0; i < MAX_FICHEROS; i++)
+    {
+        if (strcmp(directorio[i].dir_nfich,nombreantiguo)==0)
+        {
+            flag=1;
+            strcpy(directorio[i].dir_nfich,nombrenuevo);
+        }
     }
-    
+    return flag;
+}
 
+int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
+    int i,j,inodo;
+    int bloques[MAX_NUMS_BLOQUE_INODO];
+    for (i = 0; i < MAX_FICHEROS; i++)
+    {
+        if (strcmp(directorio[i].dir_nfich,nombre)==0)
+        {
+            break;
+        }
+    }
+    inodo=directorio[i].dir_inodo;
+    
+    for ( i = 0; i < MAX_NUMS_BLOQUE_INODO; i++)
+    {
+        if (inodos->blq_inodos[inodo].i_nbloque[i]==0xFFFF)
+        {
+                break;
+        }
+        bloques[i]=inodos->blq_inodos[inodo].i_nbloque[i];
+        
+    }
+    //printf("%s",memdatos[2].dato);
+    for (j = 0; j<i; j++)
+    {
+        
+        printf("%s",memdatos[bloques[j]-4].dato);
+    } 
+    return 1;
 }

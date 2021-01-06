@@ -65,8 +65,11 @@ int main()
      int h = BuscaFich(directorio,&ext_blq_inodos,prueba);
      printf("%d\n",h);
      Directorio(directorio,&ext_blq_inodos);
-
-
+     i=Renombrar(directorio,&ext_blq_inodos,"HOLA.txt","OLAKEASE.txt");
+     printf("\n%d\n",i);
+     Directorio(directorio,&ext_blq_inodos);
+     i=Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
+     printf("\n%d\n",i);
 
      // Buce de tratamiento de comandos
      /*for (;;){
