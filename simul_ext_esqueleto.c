@@ -58,7 +58,7 @@ int main()
      memcpy(&ext_bytemaps,(EXT_BLQ_INODOS *)&datosfich[1], SIZE_BLOQUE);
      memcpy(&ext_blq_inodos,(EXT_BLQ_INODOS *)&datosfich[2], SIZE_BLOQUE);
      memcpy(&memdatos,(EXT_DATOS *)&datosfich[4],MAX_BLOQUES_DATOS*SIZE_BLOQUE);
-
+     /*
      Printbytemaps(&ext_bytemaps);
      LeeSuperBloque(&ext_superblock);
      char prueba[10]="HOLA.txt";
@@ -66,14 +66,66 @@ int main()
      printf("%d\n",h);
      Directorio(directorio,&ext_blq_inodos);
      i=Renombrar(directorio,&ext_blq_inodos,"HOLA.txt","OLAKEASE.txt");
-     printf("\n%d\n",i);
      Directorio(directorio,&ext_blq_inodos);
      i=Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
-     printf("\n%d\n",i);
-     Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,"BelloGal.txt",fent);
+     Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,"OLAKEASE.txt",fent);
+     Printbytemaps(&ext_bytemaps);
+     Directorio(directorio,&ext_blq_inodos);
+     printf("////////////////%s",memdatos[2].dato);
+     Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,"BelloGal.txt","Hola.txt",fent);
+     printf("\n");
+     Directorio(directorio,&ext_blq_inodos);
+     Printbytemaps(&ext_bytemaps);
+     Imprimir(directorio,&ext_blq_inodos,memdatos,"Hola.txt");
+     printf("///////////////%s",memdatos[2].dato)*/
      
-
-
+      char com[10],string[100],string2[100];
+      for(;;){
+         printf ("\n>> ");
+		   fflush(stdin);
+		   fgets(com, LONGITUD_COMANDO, stdin);
+         for ( i = 0;com[i]!='\0'; i++)
+         {
+         }
+         com[i-1]='\0';
+         if (strcmp(com,"info")==0)
+            LeeSuperBloque(&ext_superblock);
+         else if(strcmp(com,"h")==0)
+            printf("info-dir-rename-imprimir-bytemaps-remove-copy");
+         else if(strcmp(com,"bytemaps")==0)
+            Printbytemaps(&ext_bytemaps);
+         else if(strcmp(com,"dir")==0)
+            Directorio(directorio,&ext_blq_inodos);
+         else if(strcmp(com,"rename")==0){
+            printf("\nNombre archivo:");
+		      gets(string);
+            printf("\nNombre nuevo:");
+		      gets(string2);
+            Renombrar(directorio,&ext_blq_inodos,string,string2);////
+         }
+         else if(strcmp(com,"imprimir")==0){
+            printf("\nNombre archivo:");
+		      gets(string);
+            Imprimir(directorio,&ext_blq_inodos,memdatos,string);
+         }
+         else if(strcmp(com,"remove")==0){
+            printf("\nNombre archivo:");
+		      gets(string);
+            Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,string,fent);
+         }
+         else if(strcmp(com,"copy")==0){
+            printf("\nNombre archivo origen:");
+		      gets(string);
+            printf("\nNombre archivo nuevo:");
+		      gets(string2);
+            Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,string,string2,fent);
+         }
+         else
+         {
+            printf("\nerror");
+         }
+         
+      }
      // Buce de tratamiento de comandos
      /*for (;;){
 		 do {
