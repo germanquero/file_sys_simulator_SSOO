@@ -70,6 +70,9 @@ int main()
      Directorio(directorio,&ext_blq_inodos);
      i=Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
      printf("\n%d\n",i);
+     Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,"BelloGal.txt",fent);
+     
+
 
      // Buce de tratamiento de comandos
      /*for (;;){

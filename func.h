@@ -88,7 +88,7 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
     {
         if (directorio[i].dir_inodo==0xFFFF)
         {
-            break;
+            continue;
         }
         printf("%s\t",directorio[i].dir_nfich);
         printf("tamaño:%d\t",inodos->blq_inodos[directorio[i].dir_inodo].size_fichero);
@@ -139,7 +139,6 @@ int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *mem
                 break;
         }
         bloques[i]=inodos->blq_inodos[inodo].i_nbloque[i];
-        
     }
     //printf("%s",memdatos[2].dato);
     for (j = 0; j<i; j++)
@@ -148,4 +147,32 @@ int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *mem
         printf("%s",memdatos[bloques[j]-4].dato);
     } 
     return 1;
+}
+
+int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *ext_bytemaps, EXT_SIMPLE_SUPERBLOCK *ext_superblock, char *nombre,  FILE *fich){
+    int i,j,inodo,bloques[MAX_NUMS_BLOQUE_INODO];
+    for ( i = 0; i < MAX_FICHEROS; i++)
+    {
+        if (strcmp(directorio[i].dir_nfich,nombre)==0)
+        {
+            break;
+        }
+    }
+    strcpy(directorio[i].dir_nfich,"");         //Recursos de directorio
+    inodo=directorio[i].dir_inodo;
+    directorio[i].dir_inodo=0xFFFF;
+    inodos->blq_inodos[inodo].size_fichero=0;   //Recursos inodos y bytemaps
+    ext_bytemaps->bmap_inodos[inodo]=0;     
+    for ( j = 0; j < MAX_NUMS_BLOQUE_INODO; j++)
+    {
+        if (inodos->blq_inodos[inodo].i_nbloque[j]==0xFFFF)
+        {
+            break;
+        }
+        ext_bytemaps->bmap_bloques[inodos->blq_inodos[inodo].i_nbloque[j]]=0;
+        inodos->blq_inodos[inodo].i_nbloque[j]=0xFFFF;
+    }
+    ext_superblock->s_free_blocks_count=ext_superblock->s_free_blocks_count+j;     //Recursos superbloque
+    ++ext_superblock->s_free_inodes_count;
+    return 0;
 }
