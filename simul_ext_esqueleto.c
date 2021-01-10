@@ -78,7 +78,7 @@ int main()
      Printbytemaps(&ext_bytemaps);
      Imprimir(directorio,&ext_blq_inodos,memdatos,"Hola.txt");
      printf("///////////////%s",memdatos[2].dato)*/
-     
+     //printf("%s",memdatos[2].dato);
       char com[10],string[100],string2[100];
       for(;;){
          printf ("\n>> ");
@@ -91,7 +91,7 @@ int main()
          if (strcmp(com,"info")==0)
             LeeSuperBloque(&ext_superblock);
          else if(strcmp(com,"h")==0)
-            printf("info-dir-rename-imprimir-bytemaps-remove-copy");
+            printf("info-dir-rename-imprimir-bytemaps-remove-copy-salir");
          else if(strcmp(com,"bytemaps")==0)
             Printbytemaps(&ext_bytemaps);
          else if(strcmp(com,"dir")==0)
@@ -119,6 +119,9 @@ int main()
             printf("\nNombre archivo nuevo:");
 		      gets(string2);
             Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,string,string2,fent);
+         }
+         else if(strcmp(com,"salir")==0){
+            return 0;
          }
          else
          {

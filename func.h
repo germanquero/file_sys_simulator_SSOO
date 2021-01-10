@@ -69,7 +69,7 @@ void LeeSuperBloque(EXT_SIMPLE_SUPERBLOCK *psup){
     printf("Tamaño de los bloques:%d\n",psup->s_block_size);
 }
 
-int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre){ //devuelve 0 si encuentra un nombre igual 
+int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombre){
     int i;
     for ( i = 0; i < MAX_FICHEROS; i++)
     {
@@ -95,7 +95,6 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
         {
             if (inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]==0xFFFF)
                 break;
-            
             printf("%d ",inodos->blq_inodos[directorio[i].dir_inodo].i_nbloque[j]);
         }
         printf("\n");
@@ -118,6 +117,11 @@ int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombrea
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
     int i,j,inodo;
     int bloques[MAX_NUMS_BLOQUE_INODO];
+    char texto[4][SIZE_BLOQUE];
+    for ( i = 0; i < 4; i++)
+    {
+        strcpy(texto[i],"");
+    }
     for (i = 0; i < MAX_FICHEROS; i++)
     {
         if (strcmp(directorio[i].dir_nfich,nombre)==0)
@@ -129,12 +133,11 @@ int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *mem
         if (inodos->blq_inodos[inodo].i_nbloque[i]==0xFFFF)
                 break;
         bloques[i]=inodos->blq_inodos[inodo].i_nbloque[i];
+        memcpy(&texto[i],memdatos[bloques[i]-4].dato, SIZE_BLOQUE);
     }
+    texto[i][0]='\0';
     //printf("%s",memdatos[2].dato);
-    for (j = 0; j<i; j++)
-    {
-        printf("%s\n\n\n",memdatos[bloques[j]-4].dato);
-    } 
+    puts(texto[0]);
     return 1;
 }
 
@@ -182,6 +185,8 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *e
             break;
         }
     }
+    //printf("%s",directorio[i].dir_nfich);
+   // printf("%d\n",directorio[i].dir_inodo);
     int inodoD=directorio[i].dir_inodo;
     for ( j = 0; j < MAX_FICHEROS; j++)
     {
@@ -205,10 +210,13 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *e
             break;
         }
     }
+    ext_superblock->s_free_blocks_count=ext_superblock->s_free_blocks_count-num_bloques;     //actualizacion superbloque
+    --ext_superblock->s_free_inodes_count;
     int inodoO=directorio[j].dir_inodo;
     for ( i = 0; i < num_bloques; i++)                                                       //asignacion de memoria por cada bloque
     {
-        printf("%d",i);
-        strcpy(memdatos[inodos->blq_inodos[inodoD].i_nbloque[i]-4].dato,memdatos[inodos->blq_inodos[inodoO].i_nbloque[i]-4].dato);
+        int bloqueD=inodos->blq_inodos[inodoD].i_nbloque[i]-4;
+        int bloqueO=inodos->blq_inodos[inodoO].i_nbloque[i]-4;
+        memcpy(memdatos[bloqueD].dato,memdatos[bloqueO].dato,SIZE_BLOQUE);
     }
 }
