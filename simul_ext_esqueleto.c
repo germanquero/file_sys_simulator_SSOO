@@ -13,7 +13,7 @@ int BuscaFich(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
               char *nombre);
 void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos);
 int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
-              char *nombreantiguo, char *nombrenuevo);
+              char *nombreantiguo, char *nombrenuevo ,FILE *fich);
 int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, 
              EXT_DATOS *memdatos, char *nombre);
 int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
@@ -25,7 +25,7 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
 void Grabarinodosydirectorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, FILE *fich);
 void GrabarByteMaps(EXT_BYTE_MAPS *ext_bytemaps, FILE *fich);
 void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich);
-void GrabarDatos(EXT_DATOS *memdatos, FILE *fich);
+void GrabarDatos(EXT_DATOS *memdatos, FILE *fich, int numbloques, int *bloquesO, int *bloquesD);
 
 int main()
 {
@@ -55,7 +55,7 @@ int main()
      
      memcpy(&ext_superblock,(EXT_SIMPLE_SUPERBLOCK *)&datosfich[0], SIZE_BLOQUE);
      memcpy(&directorio,(EXT_ENTRADA_DIR *)&datosfich[3], SIZE_BLOQUE);
-     memcpy(&ext_bytemaps,(EXT_BLQ_INODOS *)&datosfich[1], SIZE_BLOQUE);
+     memcpy(&ext_bytemaps,(EXT_BYTE_MAPS *)&datosfich[1], SIZE_BLOQUE);
      memcpy(&ext_blq_inodos,(EXT_BLQ_INODOS *)&datosfich[2], SIZE_BLOQUE);
      memcpy(&memdatos,(EXT_DATOS *)&datosfich[4],MAX_BLOQUES_DATOS*SIZE_BLOQUE);
      /*
@@ -78,7 +78,7 @@ int main()
      Printbytemaps(&ext_bytemaps);
      Imprimir(directorio,&ext_blq_inodos,memdatos,"Hola.txt");
      printf("///////////////%s",memdatos[2].dato)*/
-     
+     //printf("%s",memdatos[2].dato);
       char com[10],string[100],string2[100];
       /*for(;;){
          printf ("\n>> ");
@@ -91,7 +91,7 @@ int main()
          if (strcmp(com,"info")==0)
             LeeSuperBloque(&ext_superblock);
          else if(strcmp(com,"h")==0)
-            printf("info-dir-rename-imprimir-bytemaps-remove-copy");
+            printf("info-dir-rename-imprimir-bytemaps-remove-copy-salir");
          else if(strcmp(com,"bytemaps")==0)
             Printbytemaps(&ext_bytemaps);
          else if(strcmp(com,"dir")==0)
@@ -101,7 +101,10 @@ int main()
 		      gets(string);
             printf("\nNombre nuevo:");
 		      gets(string2);
-            Renombrar(directorio,&ext_blq_inodos,string,string2);////
+            Renombrar(directorio,&ext_blq_inodos,string,string2,fent);
+         }
+         else if(strcmp(com,"reset")==0){
+            
          }
          else if(strcmp(com,"imprimir")==0){
             printf("\nNombre archivo:");
@@ -119,6 +122,10 @@ int main()
             printf("\nNombre archivo nuevo:");
 		      gets(string2);
             Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,string,string2,fent);
+         }
+         else if(strcmp(com,"salir")==0){
+            fclose(fent);
+            return 0;
          }
          else
          {
