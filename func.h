@@ -1,5 +1,5 @@
 #include<string.h>
-
+#include<stdio.h>
 
 int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argumento2){
     char *lista_ordenes[8] = {"info", "bytemaps", "dir", "rename", "imprimir", "remove", "copy", "salir"};
@@ -30,21 +30,40 @@ int ComprobarComando(char *strcomando, char *orden, char *argumento1, char *argu
 }
 
 void Grabarinodosydirectorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, FILE *fich){
-
+   fseek(fich,SIZE_BLOQUE*2,SEEK_SET);
+   fwrite(inodos, SIZE_BLOQUE, 1, fich);
+   fseek(fich,SIZE_BLOQUE*3,SEEK_SET);
+   fwrite(directorio, SIZE_BLOQUE, 1, fich);
 }
 
 void GrabarByteMaps(EXT_BYTE_MAPS *ext_bytemaps, FILE *fich){
-
+   fseek(fich,SIZE_BLOQUE,SEEK_SET);
+   fwrite(ext_bytemaps, SIZE_BLOQUE, 1, fich);
 }
 
 void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich){
-
+    fseek(fich,0,SEEK_SET);
+    fwrite(ext_superblock, SIZE_BLOQUE, 1, fich);
 }
 
-void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
-
+void GrabarDatos(EXT_DATOS *memdatos, FILE *fich, int numbloques, int *bloquesO, int *bloquesD){
+    int i;
+     for ( i = 0; i < numbloques; i++)
+    {
+        //printf("%d",bloquesO[i]);
+        fseek(fich,bloquesO[i]*SIZE_BLOQUE,SEEK_SET);
+        fwrite(memdatos[bloquesO[i]-4].dato, SIZE_BLOQUE, 1, fich);
+    }
+    for ( i = 0; i < numbloques; i++)
+    {
+        //printf("%d",bloquesD[i]);
+        fseek(fich,bloquesD[i]*SIZE_BLOQUE,SEEK_SET);
+        fwrite(memdatos[bloquesD[i]-4].dato, SIZE_BLOQUE, 1, fich);
+    }
+    
+     
 }
-
+ 
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
     int i;
     printf("Bytemaps de bloques:\n");
@@ -101,7 +120,7 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
     }   
 }
 
-int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo){
+int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombreantiguo, char *nombrenuevo, FILE *fich){
     int i,flag=0;
     for ( i = 0; i < MAX_FICHEROS; i++)
     {
@@ -111,6 +130,7 @@ int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombrea
             strcpy(directorio[i].dir_nfich,nombrenuevo);
         }
     }
+    Grabarinodosydirectorio(directorio,inodos,fich);
     return flag;
 }
 
@@ -161,8 +181,11 @@ int Borrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *e
         ext_bytemaps->bmap_bloques[inodos->blq_inodos[inodo].i_nbloque[j]]=0;
         inodos->blq_inodos[inodo].i_nbloque[j]=0xFFFF;
     }
+    GrabarByteMaps(ext_bytemaps,fich);
+    Grabarinodosydirectorio(directorio,inodos,fich);
     ext_superblock->s_free_blocks_count=ext_superblock->s_free_blocks_count+j;     //Recursos superbloque
     ++ext_superblock->s_free_inodes_count;
+    GrabarSuperBloque(ext_superblock, fich);
     return 0;
 }
 
@@ -185,8 +208,6 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *e
             break;
         }
     }
-    //printf("%s",directorio[i].dir_nfich);
-   // printf("%d\n",directorio[i].dir_inodo);
     int inodoD=directorio[i].dir_inodo;
     for ( j = 0; j < MAX_FICHEROS; j++)
     {
@@ -210,13 +231,25 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_BYTE_MAPS *e
             break;
         }
     }
+    int inodoO=directorio[j].dir_inodo;
+    int bloquesO[num_bloques],bloquesD[num_bloques];
+    for ( i = 0; i < num_bloques; i++)
+    {
+        bloquesO[i]=inodos->blq_inodos[inodoO].i_nbloque[i];
+        bloquesD[i]=inodos->blq_inodos[inodoD].i_nbloque[i];
+        printf("%d",bloquesO[i]);
+        printf("%d",bloquesD[i]);
+    }
     ext_superblock->s_free_blocks_count=ext_superblock->s_free_blocks_count-num_bloques;     //actualizacion superbloque
     --ext_superblock->s_free_inodes_count;
-    int inodoO=directorio[j].dir_inodo;
     for ( i = 0; i < num_bloques; i++)                                                       //asignacion de memoria por cada bloque
     {
         int bloqueD=inodos->blq_inodos[inodoD].i_nbloque[i]-4;
         int bloqueO=inodos->blq_inodos[inodoO].i_nbloque[i]-4;
         memcpy(memdatos[bloqueD].dato,memdatos[bloqueO].dato,SIZE_BLOQUE);
     }
+    GrabarByteMaps(ext_bytemaps,fich);
+    Grabarinodosydirectorio(directorio,inodos,fich);
+    GrabarSuperBloque(ext_superblock, fich);
+    GrabarDatos(memdatos,fich,num_bloques,bloquesO,bloquesD);
 }
