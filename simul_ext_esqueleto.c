@@ -141,11 +141,11 @@ int main()
 		 fgets(comando, LONGITUD_COMANDO, stdin);
 		 } while (ComprobarComando(comando,orden,argumento1,argumento2) !=0);
 	      if (strcmp(orden,"dir")==0) {
-            Directorio(&directorio,&ext_blq_inodos);
+            Directorio(directorio,&ext_blq_inodos);
             continue;
             }
          if (strcmp(orden,"h")==0) {
-            printf("\n1. info\n2. dir\n3. rename \"originalname\" \"newname\"\n4. imprimir \"filename\"\n5. bytemaps\n6. remove \"filename\"\n7.copy \"originalname\" \"newfilename\"\n\n");
+            printf("\n1. info\n2. dir\n3. rename \"originalname\" \"newname\"\n4. imprimir \"filename\"\n5. bytemaps\n6. remove \"filename\"\n7. copy \"originalname\" \"newfilename\"\n8. salir\n\n");
             continue;
             }
          if (strcmp(orden,"bytemaps")==0) {
@@ -153,7 +153,7 @@ int main()
             continue;
             }
          if (strcmp(orden,"rename")==0) {
-            Renombrar(directorio,&ext_blq_inodos,argumento1,argumento2);
+            Renombrar(directorio,&ext_blq_inodos,argumento1,argumento2, fent);
             continue;
             }
          if (strcmp(orden,"imprimir")==0) {
