@@ -17,7 +17,7 @@ typedef struct {
   unsigned int s_free_blocks_count;     /* bloques libres */
   unsigned int s_free_inodes_count;     /* inodos libres */
   unsigned int s_first_data_block;      /* primer bloque de datos */
-  unsigned int s_block_size;        /* tamaño del bloque en bytes */
+  unsigned int s_block_size;            /* tamaño del bloque en bytes */
   unsigned char s_relleno[SIZE_BLOQUE-6*sizeof(unsigned int)]; /* relleno a 0's*/
 } EXT_SIMPLE_SUPERBLOCK;
 

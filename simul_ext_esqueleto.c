@@ -25,7 +25,7 @@ int Copiar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos,
 void Grabarinodosydirectorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, FILE *fich);
 void GrabarByteMaps(EXT_BYTE_MAPS *ext_bytemaps, FILE *fich);
 void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich);
-void GrabarDatos(EXT_DATOS *memdatos, FILE *fich, int numbloques, int *bloquesO, int *bloquesD);
+void GrabarDatos(EXT_DATOS *memdatos, FILE *fich);
 
 int main()
 {
@@ -51,88 +51,14 @@ int main()
      
      fent = fopen("particion.bin","r+b");
      fread(&datosfich, SIZE_BLOQUE, MAX_BLOQUES_PARTICION, fent);    
-     
-     
+
      memcpy(&ext_superblock,(EXT_SIMPLE_SUPERBLOCK *)&datosfich[0], SIZE_BLOQUE);
      memcpy(&directorio,(EXT_ENTRADA_DIR *)&datosfich[3], SIZE_BLOQUE);
      memcpy(&ext_bytemaps,(EXT_BYTE_MAPS *)&datosfich[1], SIZE_BLOQUE);
      memcpy(&ext_blq_inodos,(EXT_BLQ_INODOS *)&datosfich[2], SIZE_BLOQUE);
      memcpy(&memdatos,(EXT_DATOS *)&datosfich[4],MAX_BLOQUES_DATOS*SIZE_BLOQUE);
-     /*
-     Printbytemaps(&ext_bytemaps);
-     LeeSuperBloque(&ext_superblock);
-     char prueba[10]="HOLA.txt";
-     int h = BuscaFich(directorio,&ext_blq_inodos,prueba);
-     printf("%d\n",h);
-     Directorio(directorio,&ext_blq_inodos);
-     i=Renombrar(directorio,&ext_blq_inodos,"HOLA.txt","OLAKEASE.txt");
-     Directorio(directorio,&ext_blq_inodos);
-     i=Imprimir(directorio,&ext_blq_inodos,memdatos,"BelloGal.txt");
-     Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,"OLAKEASE.txt",fent);
-     Printbytemaps(&ext_bytemaps);
-     Directorio(directorio,&ext_blq_inodos);
-     printf("////////////////%s",memdatos[2].dato);
-     Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,"BelloGal.txt","Hola.txt",fent);
-     printf("\n");
-     Directorio(directorio,&ext_blq_inodos);
-     Printbytemaps(&ext_bytemaps);
-     Imprimir(directorio,&ext_blq_inodos,memdatos,"Hola.txt");
-     printf("///////////////%s",memdatos[2].dato)*/
-     //printf("%s",memdatos[2].dato);
-      char com[10],string[100],string2[100];
-      /*for(;;){
-         printf ("\n>> ");
-		   fflush(stdin);
-		   fgets(com, LONGITUD_COMANDO, stdin);
-         for ( i = 0;com[i]!='\0'; i++)
-         {
-         }
-         com[i-1]='\0';
-         if (strcmp(com,"info")==0)
-            LeeSuperBloque(&ext_superblock);
-         else if(strcmp(com,"h")==0)
-            printf("info-dir-rename-imprimir-bytemaps-remove-copy-salir");
-         else if(strcmp(com,"bytemaps")==0)
-            Printbytemaps(&ext_bytemaps);
-         else if(strcmp(com,"dir")==0)
-            Directorio(directorio,&ext_blq_inodos);
-         else if(strcmp(com,"rename")==0){
-            printf("\nNombre archivo:");
-		      gets(string);
-            printf("\nNombre nuevo:");
-		      gets(string2);
-            Renombrar(directorio,&ext_blq_inodos,string,string2,fent);
-         }
-         else if(strcmp(com,"reset")==0){
-            
-         }
-         else if(strcmp(com,"imprimir")==0){
-            printf("\nNombre archivo:");
-		      gets(string);
-            Imprimir(directorio,&ext_blq_inodos,memdatos,string);
-         }
-         else if(strcmp(com,"remove")==0){
-            printf("\nNombre archivo:");
-		      gets(string);
-            Borrar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,string,fent);
-         }
-         else if(strcmp(com,"copy")==0){
-            printf("\nNombre archivo origen:");
-		      gets(string);
-            printf("\nNombre archivo nuevo:");
-		      gets(string2);
-            Copiar(directorio,&ext_blq_inodos,&ext_bytemaps,&ext_superblock,memdatos,string,string2,fent);
-         }
-         else if(strcmp(com,"salir")==0){
-            fclose(fent);
-            return 0;
-         }
-         else
-         {
-            printf("\nerror");
-         }
-         
-      }*/
+     char com[10],string[100],string2[100];
+      
      // Buce de tratamiento de comandos
      for (;;){
 		 do {
@@ -172,17 +98,12 @@ int main()
             LeeSuperBloque(&ext_superblock);
             continue;
             }
-         // Escritura de metadatos en comandos rename, remove, copy     
-         //Grabarinodosydirectorio(&directorio,&ext_blq_inodos,fent);
-         //GrabarByteMaps(&ext_bytemaps,fent);
-         //GrabarSuperBloque(&ext_superblock,fent);
-         //if (grabardatos)
-         //  GrabarDatos(&memdatos,fent);
-         //grabardatos = 0;
          //Si el comando es salir se habrán escrito todos los metadatos
-         //faltan los datos y cerrar
          if (strcmp(orden,"salir")==0){
-         //   GrabarDatos(&memdatos,fent);
+            Grabarinodosydirectorio(directorio,&ext_blq_inodos,fent);
+            GrabarByteMaps(&ext_bytemaps,fent);
+            GrabarSuperBloque(&ext_superblock,fent);
+            GrabarDatos(memdatos,fent);
             fclose(fent);
             return 0;
          }
