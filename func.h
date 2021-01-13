@@ -49,7 +49,7 @@ void GrabarSuperBloque(EXT_SIMPLE_SUPERBLOCK *ext_superblock, FILE *fich){
 void GrabarDatos(EXT_DATOS *memdatos, FILE *fich){
     int i;
     fseek(fich,SIZE_BLOQUE*4,SEEK_SET);
-    fwrite(memdatos->dato,SIZE_BLOQUE*MAX_BLOQUES_DATOS,1,fich);
+    fwrite(memdatos->dato,SIZE_BLOQUE, MAX_BLOQUES_DATOS,fich);
 }
  
 void Printbytemaps(EXT_BYTE_MAPS *ext_bytemaps){
